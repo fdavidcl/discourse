@@ -36,6 +36,7 @@ class TopicCreator
     DiscourseEvent.trigger(:before_create_topic, topic, self)
 
     setup_auto_close_time(topic)
+    handle_archetype
     process_private_message(topic)
     save_topic(topic)
     create_warning(topic)
@@ -73,6 +74,13 @@ class TopicCreator
 
     CategoryUser.auto_watch_new_topic(topic)
     CategoryUser.auto_track_new_topic(topic)
+  end
+
+  def handle_archetype
+    archetype = Archetype.get_archetype(@topic.archetype)
+    if archetype
+      archetype.handle_topic_creation(self)
+    end
   end
 
   def setup_topic_params

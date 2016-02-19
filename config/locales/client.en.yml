@@ -859,6 +859,7 @@ en:
       cancel: "Cancel"
       create_topic: "Create Topic"
       create_pm: "Message"
+      create_selectable: "Create"
       title: "Or press Ctrl+Enter"
 
       users_placeholder: "Add a user"

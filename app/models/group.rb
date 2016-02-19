@@ -45,7 +45,7 @@ class Group < ActiveRecord::Base
   def posts_for(guardian, before_post_id=nil)
     user_ids = group_users.map {|gu| gu.user_id}
     result = Post.where(user_id: user_ids).includes(:user, :topic, :topic => :category).references(:posts, :topics, :category)
-                 .where('topics.archetype <> ?', Archetype.private_message)
+                 .where('topics.archetype IN (?)', Archetype.capable(:shown_publicly))
                  .where(post_type: Post.types[:regular])
 
     result = guardian.filter_allowed_categories(result)

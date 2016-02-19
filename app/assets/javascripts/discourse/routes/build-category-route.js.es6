@@ -2,11 +2,15 @@ import { queryParams, filterQueryParams, findTopicList } from 'discourse/routes/
 
 // A helper function to create a category route with parameters
 export default (filter, params) => {
+  var archetype = params.archetype || '';
   return Discourse.Route.extend({
     queryParams: queryParams,
 
     model(modelParams) {
-      return Discourse.Category.findBySlug(modelParams.slug, modelParams.parentSlug);
+      Discourse.Category.setArchetype(archetype);
+      var model = Discourse.Category.findBySlug(modelParams.slug, modelParams.parentSlug);
+      model.set("archetype", archetype);
+      return model;
     },
 
     afterModel(model, transition) {
@@ -22,14 +26,16 @@ export default (filter, params) => {
 
     _setupNavigation(model) {
       const noSubcategories = params && !!params.no_subcategories,
-            filterMode = `c/${Discourse.Category.slugFor(model)}${noSubcategories ? "/none" : ""}/l/${filter}`;
+            filterMode = `c/${Discourse.Category.slugFor(model)}${noSubcategories ? "/none" : ""}/l/${filter}`,
+            opts = {
+                category: model,
+                filterMode: filterMode,
+                noSubcategories: params && params.no_subcategories,
+                canEditCategory: model.get('can_edit')
+              };
+      if (archetype) opts.archetype = archetype;
 
-      this.controllerFor('navigation/category').setProperties({
-        category: model,
-        filterMode: filterMode,
-        noSubcategories: params && params.no_subcategories,
-        canEditCategory: model.get('can_edit')
-      });
+      this.controllerFor('navigation/category').setProperties(opts);
     },
 
     _createSubcategoryList(model) {

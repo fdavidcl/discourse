@@ -6,7 +6,17 @@ import { categoryBadgeHTML } from 'discourse/helpers/category-link';
 import Scrolling from 'discourse/mixins/scrolling';
 
 const TopicView = Ember.View.extend(AddCategoryClass, AddArchetypeClass, Scrolling, {
-  templateName: 'topic',
+  templateName: function() {
+    var templateName = 'topic';
+    if (this.get('controller.model.archetype') !== "regular"){
+      var archTmpl = this.get('controller.model.archetype') + "_topic";
+      if (this.templateForName(archTmpl, 'template')) {
+        templateName = archTmpl;
+      };
+    }
+    return templateName;
+  }.property('controller.model.archetype'),
+
   topicBinding: 'controller.model',
 
   userFilters: Ember.computed.alias('controller.model.userFilters'),

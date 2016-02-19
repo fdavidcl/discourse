@@ -7,9 +7,13 @@ export default NavigationDefaultController.extend({
   showingParentCategory: Em.computed.none('category.parentCategory'),
   showingSubcategoryList: Em.computed.and('subcategoryListSetting', 'showingParentCategory'),
 
-  @computed("showingSubcategoryList", "category", "noSubcategories")
-  navItems(showingSubcategoryList, category, noSubcategories) {
+  @computed("showingSubcategoryList", "category", "noSubcategories", "archetype")
+  navItems(showingSubcategoryList, category, noSubcategories, archetype) {
     if (showingSubcategoryList) { return []; }
-    return Discourse.NavItem.buildList(category, { noSubcategories });
+    var args = { noSubcategories };
+    if (archetype){
+      args.archetype = archetype;
+    }
+    return Discourse.NavItem.buildList(category, args);
   }
 });

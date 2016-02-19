@@ -176,6 +176,7 @@ SQL
     JOIN categories c ON c.id = topics.category_id
     LEFT JOIN topic_users tu ON tu.topic_id = topics.id AND tu.user_id = u.id
     WHERE u.id = :user_id AND
+          topics.archetype IN (:public_archetypes) AND
           topics.archetype <> 'private_message' AND
           ((#{unread}) OR (#{new})) AND
           (topics.visible OR u.admin OR u.moderator) AND

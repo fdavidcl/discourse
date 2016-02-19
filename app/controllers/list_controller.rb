@@ -254,6 +254,7 @@ class ListController < ApplicationController
       search: params[:search],
       q: params[:q]
     }
+    options[:archetype] = params[:archetype] if params[:archetype].present?
     options[:no_subcategories] = true if params[:no_subcategories] == 'true'
     options[:slow_platform] = true if slow_platform?
 

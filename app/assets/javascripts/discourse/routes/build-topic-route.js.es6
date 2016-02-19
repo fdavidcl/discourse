@@ -9,6 +9,7 @@ function filterQueryParams(params, defaultParams) {
       if (params[opt]) { findOpts[opt] = params[opt]; }
     });
   }
+  if (archetype) { findOpts.archetype = archetype; }
   return findOpts;
 }
 
@@ -59,13 +60,15 @@ function findTopicList(store, tracking, filter, filterParams, extras) {
   });
 }
 
-export default function(filter, extras) {
+export default function(filter, extras, archetype) {
   extras = extras || {};
+  extras.archetype = archetype;
   return Discourse.Route.extend({
     queryParams,
 
     beforeModel() {
-      this.controllerFor('navigation/default').set('filterMode', filter);
+      this.controllerFor('navigation/default').set('filterMode', filter, archetype: archetype);
+      Discourse.Category.setArchetype(archetype);
     },
 
     model(data, transition) {
@@ -108,6 +111,9 @@ export default function(filter, extras) {
         }
         if (params.ascending !== undefined) {
           topicOpts.ascending = params.ascending;
+        }
+        if (params.archetype !== undefined) {
+          topicOpts.archetype = params.archetype;
         }
       }
       this.controllerFor('discovery/topics').setProperties(topicOpts);

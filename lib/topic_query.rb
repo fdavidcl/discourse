@@ -21,6 +21,7 @@ class TopicQuery
                      category
                      order
                      ascending
+                     archetype
                      no_subcategories
                      no_definitions
                      status
@@ -303,8 +304,12 @@ class TopicQuery
         else
           result = result.where('categories.id = :category_id OR (categories.parent_category_id = :category_id AND categories.topic_id <> topics.id)', category_id: category_id)
         end
-        result = result.references(:categories)
       end
+
+      if options[:archetype].present?
+        result = result.where('topics.archetype = ?', options[:archetype])
+      end
+
 
       result = apply_ordering(result, options)
       result = result.listable_topics.includes(:category)
